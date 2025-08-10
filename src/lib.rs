@@ -1,14 +1,91 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
+use std::collections::HashMap;
+
+use postgrest::Postgrest;
+
+#[derive(Debug, Clone)]
+pub struct Client {
+    url: String,
+    api_key: String,
+    db_options: ClientDbOptions,
+    auth_options: ClientAuthOptions,
+    global_options: ClientGlobalOptions
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+impl Client {
+    pub fn new(url: &str, api_key: &str) -> Self {
+        Self {
+            url: url.to_owned(),
+            api_key: api_key.to_owned(),
+            db_options: ClientDbOptions::default(),
+            auth_options: ClientAuthOptions::default(),
+            global_options: ClientGlobalOptions::default()
+        }
+    }
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+    pub fn with_db_options(mut self, options: ClientDbOptions) -> Self {
+        self.db_options = options;
+        self
+    }
+
+    pub fn with_auth_options(mut self, options: ClientAuthOptions) -> Self {
+        self.auth_options = options;
+        self
+    }
+
+    pub fn with_global_options(mut self, options: ClientGlobalOptions) -> Self {
+        self.global_options = options;
+        self
+    }
+
+    pub fn from(&self, table: &str) -> Result<postgrest::Builder, Box<dyn std::error::Error>> {
+        let mut client = Postgrest::new(&self.url);
+        if let Some(headers) = &self.global_options.headers {
+            for (k, v) in headers {
+                client = client.insert_header(k.parse::<http::header::HeaderName>()?, v.to_owned());
+            }
+        }
+        let builder = client.from(table).auth(self.api_key.clone());
+        Ok(builder)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct ClientDbOptions {
+    pub schema: String
+}
+
+impl ClientDbOptions {
+    pub fn default() -> Self {
+        Self {
+            schema: "public".to_owned()
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct ClientAuthOptions {
+    pub auto_refresh_token: bool,
+    pub persist_session: bool,
+}
+
+impl ClientAuthOptions {
+    pub fn default() -> Self {
+        Self {
+            auto_refresh_token: true,
+            persist_session: false,
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct ClientGlobalOptions {
+    pub headers: Option<HashMap<String, String>>,
+}
+
+impl ClientGlobalOptions {
+    pub fn default() -> Self {
+        Self {
+            headers: None
+        }
     }
 }
