@@ -14,7 +14,7 @@ pub struct Client {
 impl Client {
     pub fn new(url: &str, api_key: &str) -> Self {
         Self {
-            url: url.to_owned(),
+            url: format!("{url}/rest/v1"),
             api_key: api_key.to_owned(),
             db_options: ClientDbOptions::default(),
             auth_options: ClientAuthOptions::default(),
