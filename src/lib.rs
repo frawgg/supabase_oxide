@@ -12,10 +12,10 @@ pub struct Client {
 }
 
 impl Client {
-    pub fn new(url: &str, api_key: &str) -> Self {
+    pub fn new(url: String, api_key: String) -> Self {
         Self {
             url: format!("{url}/rest/v1"),
-            api_key: api_key.to_owned(),
+            api_key: api_key,
             db_options: ClientDbOptions::default(),
             auth_options: ClientAuthOptions::default(),
             global_options: ClientGlobalOptions::default()
