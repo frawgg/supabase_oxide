@@ -47,6 +47,17 @@ impl Client {
         let builder = client.from(table).auth(self.api_key.clone());
         Ok(builder)
     }
+
+    pub fn rpc(&self, function: &str, params: &str) -> Result<postgrest::Builder, anyhow::Error> {
+        let mut client = Postgrest::new(&self.url);
+        if let Some(headers) = &self.global_options.headers {
+            for (k, v) in headers {
+                client = client.insert_header(k.parse::<http::header::HeaderName>()?, v.to_owned());
+            }
+        }
+        let builder = client.rpc(function, params).auth(self.api_key.clone());
+        Ok(builder)
+    }
 }
 
 #[derive(Debug, Clone)]
