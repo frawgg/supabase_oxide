@@ -37,7 +37,7 @@ impl Client {
         self
     }
 
-    pub fn from(&self, table: &str) -> Result<postgrest::Builder, Box<dyn std::error::Error>> {
+    pub fn from(&self, table: &str) -> Result<postgrest::Builder, anyhow::Error> {
         let mut client = Postgrest::new(&self.url);
         if let Some(headers) = &self.global_options.headers {
             for (k, v) in headers {
