@@ -1183,6 +1183,8 @@ dependencies = [
  "http",
  "postgrest",
  "reqwest",
+ "serde",
+ "serde_json",
  "tokio",
 ]
 
