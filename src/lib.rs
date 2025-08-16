@@ -2,23 +2,33 @@ use std::collections::HashMap;
 
 use postgrest::Postgrest;
 
+use crate::auth::AuthClient;
+
+mod auth;
+
+pub type JsonObject = HashMap<String, serde_json::Value>;
+
 #[derive(Debug, Clone)]
 pub struct Client {
     url: String,
     api_key: String,
+    bearer: Option<String>,
     db_options: ClientDbOptions,
     auth_options: ClientAuthOptions,
-    global_options: ClientGlobalOptions
+    global_options: ClientGlobalOptions,
+    pub auth: AuthClient
 }
 
 impl Client {
-    pub fn new(url: String, api_key: String) -> Self {
+    pub fn new(url: String, api_key: String, bearer_auth: Option<String>) -> Self {
         Self {
             url: format!("{url}/rest/v1"),
             api_key: api_key,
+            bearer: bearer_auth,
             db_options: ClientDbOptions::default(),
             auth_options: ClientAuthOptions::default(),
-            global_options: ClientGlobalOptions::default()
+            global_options: ClientGlobalOptions::default(),
+            auth: AuthClient::new(&url, None)
         }
     }
 
