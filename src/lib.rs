@@ -24,11 +24,11 @@ impl Client {
         Self {
             url: format!("{url}/rest/v1"),
             api_key: api_key,
-            bearer: bearer_auth,
+            bearer: bearer_auth.clone(),
             db_options: ClientDbOptions::default(),
             auth_options: ClientAuthOptions::default(),
             global_options: ClientGlobalOptions::default(),
-            auth: AuthClient::new(&url, None)
+            auth: AuthClient::new(&format!("{url}/auth/v1"), None, bearer_auth.clone())
         }
     }
 
