@@ -50,9 +50,10 @@ impl AuthClient {
         let response = client.get(format!("{}/user", self.url))
             .header("Authorization", self.bearer.clone().unwrap_or("".to_owned()))
             .header("apikey", &self.apikey)
-            .send().await?;
+            .send().await?.text().await?;
+        println!("{:#?}", response);
 
-        let user: SupabaseUser = response.json().await?;
+        let user: SupabaseUser = serde_json::from_str(&response)?;
 
         Ok(user)
     }
