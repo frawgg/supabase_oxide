@@ -23,12 +23,12 @@ impl Client {
     pub fn new(url: String, api_key: String, bearer_auth: Option<String>) -> Self {
         Self {
             url: format!("{url}/rest/v1"),
-            api_key: api_key,
+            api_key: api_key.clone(),
             bearer: bearer_auth.clone(),
             db_options: ClientDbOptions::default(),
             auth_options: ClientAuthOptions::default(),
             global_options: ClientGlobalOptions::default(),
-            auth: AuthClient::new(&format!("{url}/auth/v1"), None, bearer_auth.clone())
+            auth: AuthClient::new(&format!("{url}/auth/v1"), None, api_key, bearer_auth.clone())
         }
     }
 

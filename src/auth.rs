@@ -11,6 +11,7 @@ use crate::JsonObject;
 pub struct AuthClient {
     pub headers: Option<HeaderMap>,
     pub url: String,
+    apikey: String,
     bearer: Option<String>
 }
 
@@ -34,10 +35,11 @@ pub struct SupabaseUser {
 }
 
 impl AuthClient {
-    pub fn new(url: &str, headers: Option<HeaderMap>, bearer: Option<String>) -> Self {
+    pub fn new(url: &str, headers: Option<HeaderMap>, apikey: String, bearer: Option<String>) -> Self {
         Self {
             url: url.to_owned(),
             headers,
+            apikey,
             bearer
         }
     }
@@ -47,6 +49,7 @@ impl AuthClient {
 
         let response = client.get(format!("{}/user", self.url))
             .header("Authorization", self.bearer.clone().unwrap_or("".to_owned()))
+            .header("apikey", &self.apikey)
             .send().await?;
 
         let user: SupabaseUser = response.json().await?;
