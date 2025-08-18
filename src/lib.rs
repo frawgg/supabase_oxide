@@ -54,6 +54,7 @@ impl Client {
                 client = client.insert_header(k.parse::<http::header::HeaderName>()?, v.to_owned());
             }
         }
+        client = client.insert_header("apikey", self.api_key.clone());
         let auth = if let Some(auth) = &self.bearer {
             auth
         } else {
