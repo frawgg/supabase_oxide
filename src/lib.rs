@@ -54,12 +54,8 @@ impl Client {
                 client = client.insert_header(k.parse::<http::header::HeaderName>()?, v.to_owned());
             }
         }
-        let auth = if let Some(headers) = &self.global_options.headers {
-            if let Some(jwt) = headers.get("Authorization") {
-                jwt
-            } else {
-                &self.api_key
-            }
+        let auth = if let Some(auth) = &self.bearer {
+            auth
         } else {
             &self.api_key
         };
